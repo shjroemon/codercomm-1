@@ -38,7 +38,7 @@ function CommentList({ postId }) {
     renderComments = (
       <Stack spacing={1.5}>
         {comments.map((comment) => (
-          <CommentCard key={comment._id} comment={comment} />
+          <CommentCard postId={postId} key={comment._id} comment={comment} />
         ))}
       </Stack>
     );

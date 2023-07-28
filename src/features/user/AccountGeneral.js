@@ -7,9 +7,9 @@ import { useForm } from "react-hook-form";
 import * as yup from "yup";
 import { yupResolver } from "@hookform/resolvers/yup";
 import { FormProvider, FTextField, FUploadAvatar } from "../../components/form";
-import { fData } from "../../utils/numberFormat";
-import { useDispatch, useSelector } from "react-redux";
 import { updateUserProfile } from "./userSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { fData } from "../../utils/numberFormat";
 
 const UpdateUserSchema = yup.object().shape({
   name: yup.string().required("Name is required"),
@@ -21,22 +21,23 @@ function AccountGeneral() {
 
   const defaultValues = {
     name: user?.name || "",
+    avatarUrl: user?.avatarUrl || "",
     email: user?.email || "",
     jobTitle: user?.jobTitle || "",
     company: user?.company || "",
-    avatarUrl: user?.avatarUrl || "",
     coverUrl: user?.coverUrl || "",
     phoneNumber: user?.phoneNumber || "",
     address: user?.address || "",
     city: user?.city || "",
     country: user?.country || "",
-    aboutMe: user?.aboutMe || "",
+    aboutMe: user?.about || "",
   };
 
   const methods = useForm({
     resolver: yupResolver(UpdateUserSchema),
     defaultValues,
   });
+
   const {
     setValue,
     handleSubmit,
@@ -44,6 +45,10 @@ function AccountGeneral() {
   } = methods;
 
   const dispatch = useDispatch();
+
+  const onSubmit = (data) => {
+    dispatch(updateUserProfile({ userId: user._id, ...data }));
+  };
 
   const handleDrop = useCallback(
     (acceptedFiles) => {
@@ -61,15 +66,11 @@ function AccountGeneral() {
     [setValue]
   );
 
-  const onSubmit = (data) => {
-    dispatch(updateUserProfile({ userId: user._id, ...data }));
-  };
-
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Grid container spacing={3}>
         <Grid item xs={12} md={4}>
-          <Card sx={{ py: 10, px: 3, textAlign: "center" }}>
+          <Card sx={{ py: 10, px: 3, textAign: "center" }}>
             <FUploadAvatar
               name="avatarUrl"
               accept="image/*"
@@ -93,7 +94,6 @@ function AccountGeneral() {
             />
           </Card>
         </Grid>
-
         <Grid item xs={12} md={8}>
           <Card sx={{ p: 3 }}>
             <Box
@@ -102,8 +102,8 @@ function AccountGeneral() {
                 rowGap: 3,
                 columnGap: 2,
                 gridTemplateColumns: {
-                  xs: "repeat(1, 1fr)",
-                  sm: "repeat(2, 1fr)",
+                  xs: "repeat(1,1fr)",
+                  sm: "repeat(2,1fr)",
                 },
               }}
             >
@@ -113,9 +113,6 @@ function AccountGeneral() {
               <FTextField name="jobTitle" label="Job Title" />
               <FTextField name="company" label="Company" />
 
-              <FTextField name="phoneNumber" label="Phone Number" />
-              <FTextField name="address" label="Address" />
-
               <FTextField name="city" label="City" />
               <FTextField name="country" label="Country" />
             </Box>
@@ -123,7 +120,6 @@ function AccountGeneral() {
             <Stack spacing={3} alignItems="flex-end" sx={{ mt: 3 }}>
               <FTextField name="coverUrl" label="Home Profile Cover Image" />
               <FTextField name="aboutMe" multiline rows={4} label="About Me" />
-
               <LoadingButton
                 type="submit"
                 variant="contained"

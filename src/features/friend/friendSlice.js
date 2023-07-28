@@ -56,6 +56,17 @@ const slice = createSlice({
       state.totalPages = totalPages;
     },
 
+    getOutGoingRequestsSuccess(state, action) {
+      state.isLoading = false;
+      state.error = null;
+
+      const { users, count, totalPages } = action.payload;
+      users.forEach((user) => (state.usersById[user._id] = user));
+      state.currentPageUsers = users.map((user) => user._id);
+      state.totalUsers = count;
+      state.totalPages = totalPages;
+    },
+
     sendFriendRequestSuccess(state, action) {
       state.isLoading = false;
       state.error = null;
@@ -151,7 +162,7 @@ export const sendFriendRequest = (targetUserId) => async (dispatch) => {
     dispatch(
       slice.actions.sendFriendRequestSuccess({ ...response.data, targetUserId })
     );
-    toast.success("Request sent");
+    toast.success("Request send");
   } catch (error) {
     dispatch(slice.actions.hasError(error.message));
     toast.error(error.message);
@@ -199,7 +210,7 @@ export const cancelRequest = (targetUserId) => async (dispatch) => {
     dispatch(
       slice.actions.cancelRequestSuccess({ ...response.data, targetUserId })
     );
-    toast.success("Request cancelled");
+    toast.success("Request cancel");
   } catch (error) {
     dispatch(slice.actions.hasError(error.message));
     toast.error(error.message);
@@ -213,9 +224,26 @@ export const removeFriend = (targetUserId) => async (dispatch) => {
     dispatch(
       slice.actions.removeFriendSuccess({ ...response.data, targetUserId })
     );
-    toast.success("Friend removed");
+    toast.success("Request remove");
   } catch (error) {
     dispatch(slice.actions.hasError(error.message));
     toast.error(error.message);
   }
 };
+
+export const getOutGoingRequests =
+  ({ filterName, page = 1, limit = 12 }) =>
+  async (dispatch) => {
+    dispatch(slice.actions.startLoading());
+    try {
+      const params = { page, limit };
+      if (filterName) params.name = filterName;
+      const response = await apiService.get("/friends/requests/outgoing", {
+        params,
+      });
+      dispatch(slice.actions.getOutGoingRequestsSuccess(response.data));
+    } catch (error) {
+      dispatch(slice.actions.hasError(error.message));
+      toast.error(error.message);
+    }
+  };

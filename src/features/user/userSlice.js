@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
-import { toast } from "react-toastify";
 import apiService from "../../app/apiService";
+
+import { toast } from "react-toastify";
 import { cloudinaryUpload } from "../../utils/cloudinary";
 
 const initialState = {
@@ -15,32 +16,37 @@ const slice = createSlice({
   initialState,
   reducers: {
     startLoading(state) {
-      state.isLoading = true;
+      state.loading = true;
     },
-
     hasError(state, action) {
-      state.isLoading = false;
+      state.loading = false;
       state.error = action.payload;
     },
-
-    updateUserProfileSuccess(state, action) {
-      state.isLoading = false;
-      state.error = null;
-
-      const updatedUser = action.payload;
-      state.updatedProfile = updatedUser;
-    },
-
     getUserSuccess(state, action) {
       state.isLoading = false;
-      state.error = null;
-
+      state.error = false;
       state.selectedUser = action.payload;
+    },
+    updateUserProfileSuccess(state, action) {
+      state.loading = false;
+      state.error = false;
+      state.updatedProfile = action.payload;
     },
   },
 });
 
 export default slice.reducer;
+
+export const getUser = (id) => async (dispatch) => {
+  dispatch(slice.actions.startLoading());
+  try {
+    const response = await apiService.get(`/users/${id}`);
+    dispatch(slice.actions.getUserSuccess(response.data));
+  } catch (error) {
+    dispatch(slice.actions.hasError(error.message));
+    toast.error(error.message);
+  }
+};
 
 export const updateUserProfile =
   ({
@@ -74,29 +80,19 @@ export const updateUserProfile =
         linkedinLink,
         twitterLink,
       };
+
       if (avatarUrl instanceof File) {
         const imageUrl = await cloudinaryUpload(avatarUrl);
         data.avatarUrl = imageUrl;
       }
-      const response = await apiService.put(`/users/${userId}`, data);
+
+      const response = await apiService.put(`users/${userId}`, data);
       dispatch(slice.actions.updateUserProfileSuccess(response.data));
-      toast.success("Update Profile successfully");
     } catch (error) {
       dispatch(slice.actions.hasError(error.message));
       toast.error(error.message);
     }
   };
-
-export const getUser = (id) => async (dispatch) => {
-  dispatch(slice.actions.startLoading());
-  try {
-    const response = await apiService.get(`/users/${id}`);
-    dispatch(slice.actions.getUserSuccess(response.data));
-  } catch (error) {
-    dispatch(slice.actions.hasError(error));
-    toast.error(error.message);
-  }
-};
 
 export const getCurrentUserProfile = () => async (dispatch) => {
   dispatch(slice.actions.startLoading());

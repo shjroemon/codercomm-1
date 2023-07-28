@@ -16,9 +16,9 @@ function AccountPage() {
       component: <AccountGeneral />,
     },
     {
-      value: "social_links",
+      value: "socail_links",
       icon: <ShareIcon sx={{ fontSize: 30 }} />,
-      component: <AccountSocialLinks profile={{}} />,
+      component: <AccountSocialLinks />,
     },
   ];
 
@@ -32,7 +32,9 @@ function AccountPage() {
         scrollButtons="auto"
         variant="scrollable"
         allowScrollButtonsMobile
-        onChange={(e, value) => setCurrentTab(value)}
+        onChange={(e, value) => {
+          setCurrentTab(value);
+        }}
       >
         {ACCOUNT_TABS.map((tab) => (
           <Tab
@@ -44,9 +46,7 @@ function AccountPage() {
           />
         ))}
       </Tabs>
-
       <Box sx={{ mb: 5 }} />
-
       {ACCOUNT_TABS.map((tab) => {
         const isMatched = tab.value === currentTab;
         return isMatched && <Box key={tab.value}>{tab.component}</Box>;

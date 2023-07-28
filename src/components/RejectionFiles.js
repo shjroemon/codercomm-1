@@ -1,38 +1,100 @@
-import { Box, Typography, Paper } from "@mui/material";
-import { fData } from "../utils/numberFormat";
-import { alpha } from "@mui/material/styles";
+import isString from "lodash/isString";
+import { useDropzone } from "react-dropzone";
 
-function RejectionFiles({ fileRejections }) {
+import { styled } from "@mui/material/styles";
+import { Box, Stack, Typography } from "@mui/material";
+import RejectionFiles from "./RejectionFiles";
+import AddAPhotoRoundedIcon from "@mui/icons-material/AddAPhotoRounded";
+
+const DropZoneStyle = styled("div")(({ theme }) => ({
+  outline: "none",
+  overflow: "hidden",
+  position: "relative",
+  height: 200,
+  padding: theme.spacing(3, 1),
+  borderRadius: theme.shape.borderRadius,
+  transition: theme.transitions.create("padding"),
+  backgroundColor: "#F4F6F8",
+  border: `1px dashed alpha('#919EAB', 0.32)`,
+  "&:hover": { opacity: 0.72, cursor: "pointer" },
+}));
+
+function UploadSingleFile({ error = false, file, helperText, sx, ...other }) {
+  const {
+    getRootProps,
+    getInputProps,
+    isDragActive,
+    isDragReject,
+    fileRejections,
+  } = useDropzone({
+    multiple: false,
+    ...other,
+  });
+
   return (
-    <Paper
-      variant="outlined"
-      sx={{
-        py: 1,
-        px: 2,
-        mt: 3,
-        borderColor: "error.light",
-        bgcolor: (theme) => alpha(theme.palette.error.main, 0.08),
-      }}
-    >
-      {fileRejections.map(({ file, errors }) => {
-        const { path, size } = file;
+    <Box sx={{ width: "100%", ...sx }}>
+      <DropZoneStyle
+        {...getRootProps()}
+        sx={{
+          ...(isDragActive && { opacity: 0.72 }),
+          ...((isDragReject || error) && {
+            color: "error.main",
+            borderColor: "error.light",
+            bgcolor: "error.lighter",
+          }),
+          ...(file && {
+            padding: "5% 0",
+          }),
+        }}
+      >
+        <input {...getInputProps()} />
 
-        return (
-          <Box key={path} sx={{ my: 1 }}>
-            <Typography variant="subtitle2" noWrap>
-              {path} - {fData(size)}
-            </Typography>
+        <Stack
+          direction="column"
+          spacing={2}
+          justifyContent="center"
+          alignItems="center"
+          sx={{ height: "100%" }}
+        >
+          <AddAPhotoRoundedIcon />
+          <Typography
+            gutterBottom
+            variant="body2"
+            sx={{ color: "#637381" }}
+            textAlign="center"
+          >
+            Drop or Select Image
+          </Typography>
+        </Stack>
 
-            {errors.map((error) => (
-              <Typography key={error.code} variant="caption" component="p">
-                - {error.message}
-              </Typography>
-            ))}
+        {file && (
+          <Box
+            sx={{
+              top: 8,
+              left: 8,
+              borderRadius: 1,
+              position: "absolute",
+              width: "calc(100% - 16px)",
+              height: "calc(100% - 16px)",
+              overflow: "hidden",
+              "& img": { objectFit: "cover", width: 1, height: 1 },
+            }}
+          >
+            <img
+              alt="file preview"
+              src={isString(file) ? file : file.preview}
+            />
           </Box>
-        );
-      })}
-    </Paper>
+        )}
+      </DropZoneStyle>
+
+      {fileRejections.length > 0 && (
+        <RejectionFiles fileRejections={fileRejections} />
+      )}
+
+      {helperText && helperText}
+    </Box>
   );
 }
 
-export default RejectionFiles;
+export default UploadSingleFile;

@@ -1,4 +1,7 @@
+import React from "react";
+
 import { Card, Stack, Typography, Divider } from "@mui/material";
+
 import { fNumber } from "../../utils/numberFormat";
 
 function ProfileScorecard({ profile }) {
@@ -7,7 +10,7 @@ function ProfileScorecard({ profile }) {
   return (
     <Card sx={{ py: 3 }}>
       <Stack
-        direction="row"
+        direcion="row"
         divider={<Divider orientation="vertical" flexItem />}
       >
         <Stack width={1} textAlign="center">
@@ -16,7 +19,6 @@ function ProfileScorecard({ profile }) {
             Friends
           </Typography>
         </Stack>
-
         <Stack width={1} textAlign="center">
           <Typography variant="h4">{fNumber(postCount)}</Typography>
           <Typography variant="body2" sx={{ color: "text.secondary" }}>

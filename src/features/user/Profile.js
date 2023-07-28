@@ -1,15 +1,21 @@
-import { Grid, Stack } from "@mui/material";
+import React from "react";
+
+import Grid from "@mui/material/Grid";
+import Stack from "@mui/material/Stack";
+
+import useAuth from "../../hooks/useAuth";
+
+import ProfileScorecard from "./ProfileScorecard";
 import ProfileAbout from "./ProfileAbout";
 import ProfileSocialInfo from "./ProfileSocialInfo";
-import PostForm from "../post/PostForm";
-import ProfileScorecard from "./ProfileScorecard";
+import CreatePost from "../post/CreatePost";
 import PostList from "../post/PostList";
-import useAuth from "../../hooks/useAuth";
 
 function Profile({ profile }) {
   const { user } = useAuth();
+
   return (
-    <Grid container spacing={3}>
+    <Grid spacing={3} container>
       <Grid item xs={12} md={4}>
         <Stack spacing={3}>
           <ProfileScorecard profile={profile} />
@@ -17,10 +23,9 @@ function Profile({ profile }) {
           <ProfileSocialInfo profile={profile} />
         </Stack>
       </Grid>
-
       <Grid item xs={12} md={8}>
         <Stack spacing={3}>
-          {user._id === profile._id && <PostForm />}
+          {user._id === profile._id && <CreatePost />}
           <PostList userId={profile._id} />
         </Stack>
       </Grid>

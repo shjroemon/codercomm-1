@@ -1,23 +1,22 @@
 import React, { useState } from "react";
-import {
-  Link,
-  Stack,
-  Alert,
-  IconButton,
-  InputAdornment,
-  Container,
-} from "@mui/material";
-import { LoadingButton } from "@mui/lab";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-
-import { useNavigate, useLocation, Link as RouterLink } from "react-router-dom";
 
 import { FCheckbox, FormProvider, FTextField } from "../components/form";
-import useAuth from "../hooks/useAuth";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
+
+import { useLocation, useNavigate, Link as RouterLink } from "react-router-dom";
+import useAuth from "../hooks/useAuth";
+
+import Container from "@mui/material/Container";
+import Stack from "@mui/material/Stack";
+import Alert from "@mui/material/Alert";
+import Link from "@mui/material/Link";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { LoadingButton } from "@mui/lab";
 
 const LoginSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
@@ -31,15 +30,17 @@ const defaultValues = {
 };
 
 function LoginPage() {
-  const navigate = useNavigate();
   const location = useLocation();
+  const navigate = useNavigate();
   const auth = useAuth();
+
   const [showPassword, setShowPassword] = useState(false);
 
   const methods = useForm({
     resolver: yupResolver(LoginSchema),
     defaultValues,
   });
+
   const {
     handleSubmit,
     reset,
@@ -50,7 +51,6 @@ function LoginPage() {
   const onSubmit = async (data) => {
     const from = location.state?.from?.pathname || "/";
     let { email, password } = data;
-
     try {
       await auth.login({ email, password }, () => {
         navigate(from, { replace: true });
@@ -69,14 +69,13 @@ function LoginPage() {
             <Alert severity="error">{errors.responseError.message}</Alert>
           )}
           <Alert severity="info">
-            Don’t have an account?{" "}
+            Don't have an account?{" "}
             <Link variant="subtitle2" component={RouterLink} to="/register">
               Get started
             </Link>
           </Alert>
 
           <FTextField name="email" label="Email address" />
-
           <FTextField
             name="password"
             label="Password"
@@ -85,7 +84,9 @@ function LoginPage() {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
-                    onClick={() => setShowPassword(!showPassword)}
+                    onClick={() => {
+                      setShowPassword(!showPassword);
+                    }}
                     edge="end"
                   >
                     {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
@@ -95,7 +96,6 @@ function LoginPage() {
             }}
           />
         </Stack>
-
         <Stack
           direction="row"
           alignItems="center"
@@ -104,10 +104,9 @@ function LoginPage() {
         >
           <FCheckbox name="remember" label="Remember me" />
           <Link component={RouterLink} variant="subtitle2" to="/">
-            Forgot password?
+            Forgot password
           </Link>
         </Stack>
-
         <LoadingButton
           fullWidth
           size="large"

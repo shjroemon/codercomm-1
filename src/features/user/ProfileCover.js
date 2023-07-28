@@ -1,13 +1,16 @@
-import { styled } from "@mui/material/styles";
-import { Avatar, Box, Typography } from "@mui/material";
-import { alpha } from "@mui/material/styles";
+import React from "react";
+
 import useAuth from "../../hooks/useAuth";
-import ActionButton from "../friend/ActionButton";
+
+import { styled, alpha } from "@mui/material/styles";
+import { Avatar, Box, Typography } from "@mui/material";
+
 import FriendStatus from "../friend/FriendStatus";
+import ActionButton from "../friend/ActionButton";
 
 const RootStyle = styled("div")(({ theme }) => ({
   "&:before": {
-    backdropFilter: `blur(1px)`,
+    backdropFilter: "blur(1px)",
     backgroundColor: alpha(theme.palette.primary.darker, 0.7),
     top: 0,
     zIndex: 9,
@@ -39,17 +42,11 @@ function ProfileCover({ profile }) {
   const {
     _id: targetUserId,
     name,
-    jobTitle,
+    jobtitle,
     coverUrl,
     avatarUrl,
     friendship,
   } = profile;
-
-  const handleError = (e) => {
-    const imgIndex = Math.floor(Math.random() * 5) + 1;
-    e.target.src = `/covers/cover_${imgIndex}.jpeg`;
-    e.target.onError = null;
-  };
 
   const friendStatus = (
     <FriendStatus
@@ -59,6 +56,12 @@ function ProfileCover({ profile }) {
       friendship={friendship}
     />
   );
+
+  const handleError = (e) => {
+    const imageIndex = Math.floor(Math.random() * 5) + 1;
+    e.target.src = `/covers/cover_${imageIndex}.jpeg`;
+    e.target.onError = null;
+  };
 
   return (
     <RootStyle>
@@ -84,7 +87,7 @@ function ProfileCover({ profile }) {
           }}
         >
           <Typography variant="h5">{name}</Typography>
-          <Typography sx={{ opacity: 0.72 }}>{jobTitle}</Typography>
+          <Typography sx={{ opacity: 0.72 }}>{jobtitle}</Typography>
           {friendStatus ? (
             friendStatus
           ) : (

@@ -1,8 +1,8 @@
 import React from "react";
-import { ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.min.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
-const AlertMsg = () => {
+function AlertMsg() {
   return (
     <ToastContainer
       position="top-right"
@@ -11,6 +11,6 @@ const AlertMsg = () => {
       pauseOnHover
     />
   );
-};
+}
 
 export default AlertMsg;

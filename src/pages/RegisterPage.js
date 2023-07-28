@@ -1,23 +1,22 @@
 import React, { useState } from "react";
-import {
-  Link,
-  Stack,
-  Alert,
-  IconButton,
-  InputAdornment,
-  Container,
-} from "@mui/material";
-import { LoadingButton } from "@mui/lab";
-import VisibilityIcon from "@mui/icons-material/Visibility";
-import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
-
-import { useNavigate, Link as RouterLink } from "react-router-dom";
-
 import useAuth from "../hooks/useAuth";
-import { FormProvider, FTextField } from "../components/form";
+
+import { useLocation, useNavigate, Link as RouterLink } from "react-router-dom";
+
+import { FCheckbox, FormProvider, FTextField } from "../components/form";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
+
+import Container from "@mui/material/Container";
+import Stack from "@mui/material/Stack";
+import Alert from "@mui/material/Alert";
+import Link from "@mui/material/Link";
+import InputAdornment from "@mui/material/InputAdornment";
+import IconButton from "@mui/material/IconButton";
+import VisibilityIcon from "@mui/icons-material/Visibility";
+import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
+import { LoadingButton } from "@mui/lab";
 
 const RegisterSchema = Yup.object().shape({
   name: Yup.string().required("Name is required"),
@@ -25,7 +24,7 @@ const RegisterSchema = Yup.object().shape({
   password: Yup.string().required("Password is required"),
   passwordConfirmation: Yup.string()
     .required("Please confirm your password")
-    .oneOf([Yup.ref("password")], "Passwords must match"),
+    .oneOf([Yup.ref("password")], "Password must match"),
 });
 
 const defaultValues = {
@@ -36,16 +35,19 @@ const defaultValues = {
 };
 
 function RegisterPage() {
-  const navigate = useNavigate();
   const auth = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showPasswordConfirmation, setShowPasswordConfirmation] =
     useState(false);
 
+  const location = useLocation();
+  const navigate = useNavigate();
+
   const methods = useForm({
     resolver: yupResolver(RegisterSchema),
     defaultValues,
   });
+
   const {
     handleSubmit,
     reset,
@@ -54,10 +56,11 @@ function RegisterPage() {
   } = methods;
 
   const onSubmit = async (data) => {
-    const { name, email, password } = data;
+    const from = location.state?.from?.pathname || "/";
+    let { email, password, name } = data;
     try {
-      await auth.register({ name, email, password }, () => {
-        navigate("/", { replace: true });
+      await auth.register({ email, password, name }, () => {
+        navigate(from, { replace: true });
       });
     } catch (error) {
       reset();
@@ -72,13 +75,12 @@ function RegisterPage() {
           {!!errors.responseError && (
             <Alert severity="error">{errors.responseError.message}</Alert>
           )}
-          <Alert severity="info">
-            Already have an account?{" "}
+          <Alert>
+            Already have a account?{" "}
             <Link variant="subtitle2" component={RouterLink} to="/login">
               Sign in
             </Link>
           </Alert>
-
           <FTextField name="name" label="Full name" />
           <FTextField name="email" label="Email address" />
           <FTextField
@@ -89,7 +91,9 @@ function RegisterPage() {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
-                    onClick={() => setShowPassword(!showPassword)}
+                    onClick={() => {
+                      setShowPassword(!showPassword);
+                    }}
                     edge="end"
                   >
                     {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
@@ -106,22 +110,17 @@ function RegisterPage() {
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
-                    onClick={() =>
-                      setShowPasswordConfirmation(!showPasswordConfirmation)
-                    }
+                    onClick={() => {
+                      setShowPasswordConfirmation(!showPasswordConfirmation);
+                    }}
                     edge="end"
                   >
-                    {showPasswordConfirmation ? (
-                      <VisibilityIcon />
-                    ) : (
-                      <VisibilityOffIcon />
-                    )}
+                    {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
                   </IconButton>
                 </InputAdornment>
               ),
             }}
           />
-
           <LoadingButton
             fullWidth
             size="large"
@@ -129,7 +128,7 @@ function RegisterPage() {
             variant="contained"
             loading={isSubmitting}
           >
-            Register
+            Login
           </LoadingButton>
         </Stack>
       </FormProvider>

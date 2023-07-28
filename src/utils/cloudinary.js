@@ -19,3 +19,20 @@ export const cloudinaryUpload = async (image) => {
     throw error;
   }
 };
+
+export const cloudinaryDelete = async (imageId) => {
+  if (!imageId) return;
+  try {
+    const formData = new FormData();
+    formData.append("public_id", imageId);
+    const response = await axios({
+      url: `https://api.cloudinary.com/v1_1/${CLOUDINARY_CLOUD_NAME}/image/destroy`,
+      method: "POST",
+      data: formData,
+      headers: { "Content-Type": "multipart/form-data" },
+    });
+    console.log(response);
+  } catch (error) {
+    throw error;
+  }
+};

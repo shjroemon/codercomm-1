@@ -1,19 +1,26 @@
 import React, { useState } from "react";
 import useAuth from "../hooks/useAuth";
 
-import { Box, Card, Container, Tab, Tabs } from "@mui/material";
-import { styled } from "@mui/material/styles";
-import AccountBoxIcon from "@mui/icons-material/AccountBox";
-import ContactMailIcon from "@mui/icons-material/ContactMail";
-import PersonAddRoundedIcon from "@mui/icons-material/PersonAddRounded";
+import Box from "@mui/material/Box";
+import Card from "@mui/material/Card";
+import AccountIcon from "@mui/icons-material/AccountBox";
+import Container from "@mui/material/Container";
+import Tabs from "@mui/material/Tabs";
+import Tab from "@mui/material/Tab";
 import PeopleAltIcon from "@mui/icons-material/PeopleAlt";
+import ContactMailIcon from "@mui/icons-material/ContactMail";
+import PersonAddAltRoundedIcon from "@mui/icons-material/PersonAddAlt1Rounded";
 
 import Profile from "../features/user/Profile";
-import ProfileCover from "../features/user/ProfileCover";
-import { capitalCase } from "change-case";
-import AddFriend from "../features/friend/AddFriend";
-import FriendRequests from "../features/friend/FriendRequests";
 import FriendList from "../features/friend/FriendList";
+import FriendRequests from "../features/friend/FriendRequests";
+import AddFriend from "../features/friend/AddFriend";
+import ProfileCover from "../features/user/ProfileCover";
+import OutGoingRequests from "../features/friend/OutGoingRequests";
+
+import { styled } from "@mui/material/styles";
+
+import { capitalCase } from "change-case";
 
 const TabsWrapperStyle = styled("div")(({ theme }) => ({
   zIndex: 9,
@@ -42,7 +49,7 @@ function HomePage() {
   const PROFILE_TABS = [
     {
       value: "profile",
-      icon: <AccountBoxIcon sx={{ fontSize: 24 }} />,
+      icon: <AccountIcon sx={{ fontSize: 24 }} />,
       component: <Profile profile={user} />,
     },
     {
@@ -56,30 +63,29 @@ function HomePage() {
       component: <FriendRequests />,
     },
     {
+      value: "out_going_requests",
+      icon: <ContactMailIcon sx={{ fontSize: 24 }} />,
+      component: <OutGoingRequests />,
+    },
+    {
       value: "add_friend",
-      icon: <PersonAddRoundedIcon sx={{ fontSize: 24 }} />,
+      icon: <PersonAddAltRoundedIcon sx={{ fontSize: 24 }} />,
       component: <AddFriend />,
     },
   ];
-
   return (
     <Container>
-      <Card
-        sx={{
-          mb: 3,
-          height: 280,
-          position: "relative",
-        }}
-      >
+      <Card sx={{ mb: 3, height: 280, position: "relative" }}>
         <ProfileCover profile={user} />
-
         <TabsWrapperStyle>
           <Tabs
             value={currentTab}
             scrollButtons="auto"
             variant="scrollable"
             allowScrollButtonsMobile
-            onChange={(e, value) => handleChangeTab(value)}
+            onChange={(e, value) => {
+              handleChangeTab(value);
+            }}
           >
             {PROFILE_TABS.map((tab) => (
               <Tab
@@ -93,7 +99,6 @@ function HomePage() {
           </Tabs>
         </TabsWrapperStyle>
       </Card>
-
       {PROFILE_TABS.map((tab) => {
         const isMatched = tab.value === currentTab;
         return isMatched && <Box key={tab.value}>{tab.component}</Box>;

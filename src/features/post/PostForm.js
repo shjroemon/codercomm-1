@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { Box, Card, alpha, Stack } from "@mui/material";
+import { Box, Card, alpha, Stack, Button } from "@mui/material";
 
 import { FormProvider, FTextField, FUploadImage } from "../../components/form";
 import { useDispatch, useSelector } from "react-redux";
@@ -8,6 +8,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 import { createPost } from "./postSlice";
 import { LoadingButton } from "@mui/lab";
+import { ClosedCaptionDisabledOutlined } from "@mui/icons-material";
 
 const yupSchema = Yup.object().shape({
   content: Yup.string().required("Content is required"),
@@ -18,20 +19,20 @@ const defaultValues = {
   image: null,
 };
 
-function PostForm() {
+function PostForm({ submit, post = defaultValues }) {
   const { isLoading } = useSelector((state) => state.post);
 
   const methods = useForm({
     resolver: yupResolver(yupSchema),
-    defaultValues,
+    defaultValues: { ...post },
   });
+
   const {
     handleSubmit,
     reset,
     setValue,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty },
   } = methods;
-  const dispatch = useDispatch();
 
   const handleDrop = useCallback(
     (acceptedFiles) => {
@@ -42,15 +43,21 @@ function PostForm() {
           "image",
           Object.assign(file, {
             preview: URL.createObjectURL(file),
-          })
+          }),
+          { shouldDirty: true }
         );
       }
     },
     [setValue]
   );
 
-  const onSubmit = (data) => {
-    dispatch(createPost(data)).then(() => reset());
+  const onSubmit = async (data) => {
+    try {
+      await submit(data, post);
+      reset();
+    } catch (error) {
+      console.log(error.message);
+    }
   };
 
   return (
@@ -84,6 +91,7 @@ function PostForm() {
               alignItems: "center",
               justifyContent: "flex-end",
             }}
+            gap={1}
           >
             <LoadingButton
               type="submit"
@@ -93,6 +101,17 @@ function PostForm() {
             >
               Post
             </LoadingButton>
+
+            {isDirty && (
+              <Button
+                type="button"
+                onClick={() => reset()}
+                variant="contained"
+                size="small"
+              >
+                Cancel
+              </Button>
+            )}
           </Box>
         </Stack>
       </FormProvider>

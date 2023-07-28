@@ -1,3 +1,5 @@
+import React from "react";
+
 import { styled } from "@mui/material/styles";
 import { Link, Card, CardHeader, Stack, Box } from "@mui/material";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
@@ -18,7 +20,7 @@ function ProfileSocialInfo({ profile }) {
 
   const SOCIALS = [
     {
-      name: "Linkedin",
+      name: "Linked",
       icon: (
         <IconStyle color="#006097">
           <LinkedInIcon />
@@ -27,31 +29,31 @@ function ProfileSocialInfo({ profile }) {
       href: linkedinLink,
     },
     {
-      name: "Twitter",
+      name: "Instagram",
       icon: (
-        <IconStyle color="#1877F2">
-          <TwitterIcon />
+        <IconStyle color="#006097">
+          <InstagramIcon />
         </IconStyle>
       ),
-      href: twitterLink,
+      href: instagramLink,
     },
     {
       name: "Facebook",
       icon: (
-        <IconStyle color="#1C9CEA">
+        <IconStyle color="#006097">
           <FacebookIcon />
         </IconStyle>
       ),
       href: facebookLink,
     },
     {
-      name: "Instagram",
+      name: "Twitter",
       icon: (
-        <IconStyle color="#D7336D">
-          <InstagramIcon />
+        <IconStyle color="#006097">
+          <TwitterIcon />
         </IconStyle>
       ),
-      href: instagramLink,
+      href: twitterLink,
     },
   ];
 

@@ -1,24 +1,28 @@
-import * as React from "react";
+import React, { useState } from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
-import IconButton from "@mui/material/IconButton";
 import Typography from "@mui/material/Typography";
+import IconButton from "@mui/material/IconButton";
+import MenuIcon from "@mui/icons-material/Menu";
+import AccountCircle from "@mui/icons-material/AccountCircle";
+import Switch from "@mui/material/Switch";
+import FormControlLabel from "@mui/material/FormControlLabel";
+import FormGroup from "@mui/material/FormGroup";
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
+import Avatar from "@mui/material/Avatar";
+import Divider from "@mui/material/Divider";
 
-import Logo from "../components/Logo";
-import { Avatar, Divider } from "@mui/material";
-import useAuth from "../hooks/useAuth";
 import { useNavigate, Link as RouterLink } from "react-router-dom";
+
+import useAuth from "../hooks/useAuth";
+import Logo from "../components/Logo";
 
 function MainHeader() {
   const { user, logout } = useAuth();
+  const [anchorEl, setAnchorEl] = useState(null);
   const navigate = useNavigate();
-
-  const [anchorEl, setAnchorEl] = React.useState(null);
-
-  const isMenuOpen = Boolean(anchorEl);
 
   const handleProfileMenuOpen = (event) => {
     setAnchorEl(event.currentTarget);
@@ -28,32 +32,23 @@ function MainHeader() {
     setAnchorEl(null);
   };
 
-  const handleLogout = async () => {
-    try {
-      handleMenuClose();
-      await logout(() => {
-        navigate("/login");
-      });
-    } catch (error) {
-      console.error(error);
-    }
+  const handleLogout = () => {
+    handleMenuClose();
+    logout(() => {
+      navigate("/");
+    });
   };
 
-  const menuId = "primary-search-account-menu";
   const renderMenu = (
     <Menu
       anchorEl={anchorEl}
-      anchorOrigin={{
-        vertical: "bottom",
-        horizontal: "right",
-      }}
-      id={menuId}
+      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       keepMounted
       transformOrigin={{
         vertical: "top",
         horizontal: "right",
       }}
-      open={isMenuOpen}
+      open={Boolean(anchorEl)}
       onClose={handleMenuClose}
     >
       <Box sx={{ my: 1.5, px: 2.5 }}>
@@ -64,69 +59,46 @@ function MainHeader() {
           {user?.email}
         </Typography>
       </Box>
-
-      <Divider sx={{ borderStyle: "dashed" }} />
-
-      <MenuItem
-        onClick={handleMenuClose}
-        to="/"
-        component={RouterLink}
-        sx={{ mx: 1 }}
-      >
-        My Profile
+      <Divider sx={{ boderStyle: "dashed" }} />
+      <MenuItem onClick={handleMenuClose} component={RouterLink} to="/">
+        Profile
       </MenuItem>
-
-      <MenuItem
-        onClick={handleMenuClose}
-        to="/account"
-        component={RouterLink}
-        sx={{ mx: 1 }}
-      >
-        Account Settings
+      <Divider sx={{ boderStyle: "dashed" }} />
+      <MenuItem onClick={handleMenuClose} component={RouterLink} to="/account">
+        Account Setting
       </MenuItem>
-
-      <Divider sx={{ borderStyle: "dashed" }} />
-
-      <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
-        Logout
-      </MenuItem>
+      <Divider sx={{ boderStyle: "dashed" }} />
+      <MenuItem onClick={handleLogout}>Log out</MenuItem>
     </Menu>
   );
 
   return (
     <Box sx={{ mb: 3 }}>
-      <AppBar position="static" color="transparent">
+      <AppBar position="static">
         <Toolbar>
           <IconButton
             size="large"
             edge="start"
             color="inherit"
-            aria-label="open drawer"
+            aria-label="menu"
             sx={{ mr: 2 }}
           >
             <Logo />
           </IconButton>
-          <Typography
-            variant="h6"
-            noWrap
-            component="div"
-            sx={{ display: { xs: "none", sm: "block" } }}
-          >
+          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
             CoderComm
           </Typography>
-
           <Box sx={{ flexGrow: 1 }} />
           <Box>
             <Avatar
-              onClick={handleProfileMenuOpen}
-              src={user.avatarUrl}
+              src={user.avatarURL}
               alt={user.name}
-              sx={{ width: 32, height: 32 }}
+              onClick={handleProfileMenuOpen}
             />
+            {renderMenu}
           </Box>
         </Toolbar>
       </AppBar>
-      {renderMenu}
     </Box>
   );
 }
