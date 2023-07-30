@@ -1,7 +1,7 @@
 import React from "react";
 
 import { styled } from "@mui/material/styles";
-import { Link, Card, CardHeader, Stack, Box } from "@mui/material";
+import { Box, Card, CardHeader, Link, Stack } from "@mui/material";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
 import InstagramIcon from "@mui/icons-material/Instagram";
 import FacebookIcon from "@mui/icons-material/Facebook";
@@ -20,40 +20,40 @@ function ProfileSocialInfo({ profile }) {
 
   const SOCIALS = [
     {
-      name: "Linked",
+      name: "Linkedin",
       icon: (
-        <IconStyle color="#006097">
+        <IconStyle color={"#006097"}>
           <LinkedInIcon />
         </IconStyle>
       ),
       href: linkedinLink,
     },
     {
-      name: "Instagram",
+      name: "Twitter",
       icon: (
-        <IconStyle color="#006097">
-          <InstagramIcon />
+        <IconStyle color={"#1877F2"}>
+          <TwitterIcon />
         </IconStyle>
       ),
-      href: instagramLink,
+      href: twitterLink,
     },
     {
       name: "Facebook",
       icon: (
-        <IconStyle color="#006097">
+        <IconStyle color={"#1C9CEA"}>
           <FacebookIcon />
         </IconStyle>
       ),
       href: facebookLink,
     },
     {
-      name: "Twitter",
+      name: "Instagram",
       icon: (
-        <IconStyle color="#006097">
-          <TwitterIcon />
+        <IconStyle color={"#D73360"}>
+          <InstagramIcon />
         </IconStyle>
       ),
-      href: twitterLink,
+      href: instagramLink,
     },
   ];
 
@@ -62,9 +62,14 @@ function ProfileSocialInfo({ profile }) {
       <CardHeader title="Social" />
       <Stack spacing={2} sx={{ p: 3 }}>
         {SOCIALS.map((link) => (
-          <Stack key={link.name} direction="row" alignItems="center">
+          <Stack key={link.name} direction={"row"} alignItems={"center"}>
             {link.icon}
-            <Link component="span" variant="body2" color="text.primary" noWrap>
+            <Link
+              component={"span"}
+              variant="body2"
+              color={"text.primary"}
+              noWrap
+            >
               {link.href}
             </Link>
           </Stack>

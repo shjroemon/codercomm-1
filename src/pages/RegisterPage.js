@@ -1,19 +1,20 @@
 import React, { useState } from "react";
-import useAuth from "../hooks/useAuth";
-
-import { useLocation, useNavigate, Link as RouterLink } from "react-router-dom";
-
 import { FCheckbox, FormProvider, FTextField } from "../components/form";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 
-import Container from "@mui/material/Container";
-import Stack from "@mui/material/Stack";
-import Alert from "@mui/material/Alert";
-import Link from "@mui/material/Link";
-import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
+import useAuth from "../hooks/useAuth";
+import { useNavigate, useLocation, Link as RouterLink } from "react-router-dom";
+
+import {
+  Alert,
+  Container,
+  IconButton,
+  InputAdornment,
+  Link,
+  Stack,
+} from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { LoadingButton } from "@mui/lab";
@@ -23,8 +24,8 @@ const RegisterSchema = Yup.object().shape({
   email: Yup.string().email("Invalid email").required("Email is required"),
   password: Yup.string().required("Password is required"),
   passwordConfirmation: Yup.string()
-    .required("Please confirm your password")
-    .oneOf([Yup.ref("password")], "Password must match"),
+    .required("Please confirm password")
+    .oneOf([Yup.ref("password")], "Passwords must match"),
 });
 
 const defaultValues = {
@@ -40,9 +41,6 @@ function RegisterPage() {
   const [showPasswordConfirmation, setShowPasswordConfirmation] =
     useState(false);
 
-  const location = useLocation();
-  const navigate = useNavigate();
-
   const methods = useForm({
     resolver: yupResolver(RegisterSchema),
     defaultValues,
@@ -55,12 +53,15 @@ function RegisterPage() {
     formState: { errors, isSubmitting },
   } = methods;
 
+  const navigate = useNavigate();
+
   const onSubmit = async (data) => {
-    const from = location.state?.from?.pathname || "/";
-    let { email, password, name } = data;
+    const { name, email, password } = data;
+
     try {
-      await auth.register({ email, password, name }, () => {
-        navigate(from, { replace: true });
+      await auth.register({ name, email, password }, () => {
+        navigate("/", { replace: true });
+        // this is the callback param of the register func in AuthProvider
       });
     } catch (error) {
       reset();
@@ -75,25 +76,23 @@ function RegisterPage() {
           {!!errors.responseError && (
             <Alert severity="error">{errors.responseError.message}</Alert>
           )}
-          <Alert>
-            Already have a account?{" "}
+          <Alert severity="info">
+            Already have an account?{" "}
             <Link variant="subtitle2" component={RouterLink} to="/login">
               Sign in
             </Link>
           </Alert>
-          <FTextField name="name" label="Full name" />
-          <FTextField name="email" label="Email address" />
+          <FTextField name={"name"} label={"Full name"} />
+          <FTextField name={"email"} label={"Email address"} />
           <FTextField
-            name="password"
-            label="Password"
+            name={"password"}
+            label={"Password"}
             type={showPassword ? "text" : "password"}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
-                    onClick={() => {
-                      setShowPassword(!showPassword);
-                    }}
+                    onClick={() => setShowPassword(!showPassword)}
                     edge="end"
                   >
                     {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
@@ -103,16 +102,16 @@ function RegisterPage() {
             }}
           />
           <FTextField
-            name="passwordConfirmation"
-            label="Password Confirmation"
-            type={showPasswordConfirmation ? "text" : "password"}
+            name={"passwordConfirmation"}
+            label={"Password Confirmation"}
+            type={showPassword ? "text" : "password"}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
-                    onClick={() => {
-                      setShowPasswordConfirmation(!showPasswordConfirmation);
-                    }}
+                    onClick={() =>
+                      setShowPasswordConfirmation(!showPasswordConfirmation)
+                    }
                     edge="end"
                   >
                     {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
@@ -128,7 +127,7 @@ function RegisterPage() {
             variant="contained"
             loading={isSubmitting}
           >
-            Login
+            Register
           </LoadingButton>
         </Stack>
       </FormProvider>

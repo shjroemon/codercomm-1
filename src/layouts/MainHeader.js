@@ -1,27 +1,21 @@
-import React, { useState } from "react";
+import * as React from "react";
 import AppBar from "@mui/material/AppBar";
 import Box from "@mui/material/Box";
 import Toolbar from "@mui/material/Toolbar";
 import Typography from "@mui/material/Typography";
 import IconButton from "@mui/material/IconButton";
-import MenuIcon from "@mui/icons-material/Menu";
-import AccountCircle from "@mui/icons-material/AccountCircle";
-import Switch from "@mui/material/Switch";
-import FormControlLabel from "@mui/material/FormControlLabel";
-import FormGroup from "@mui/material/FormGroup";
+
 import MenuItem from "@mui/material/MenuItem";
 import Menu from "@mui/material/Menu";
-import Avatar from "@mui/material/Avatar";
-import Divider from "@mui/material/Divider";
-
-import { useNavigate, Link as RouterLink } from "react-router-dom";
-
 import useAuth from "../hooks/useAuth";
 import Logo from "../components/Logo";
+import { Avatar, Divider } from "@mui/material";
+import { Link as RouterLink, useNavigate } from "react-router-dom";
 
 function MainHeader() {
   const { user, logout } = useAuth();
-  const [anchorEl, setAnchorEl] = useState(null);
+  const [anchorEl, setAnchorEl] = React.useState(null);
+
   const navigate = useNavigate();
 
   const handleProfileMenuOpen = (event) => {
@@ -32,17 +26,25 @@ function MainHeader() {
     setAnchorEl(null);
   };
 
-  const handleLogout = () => {
-    handleMenuClose();
-    logout(() => {
-      navigate("/");
-    });
+  const handleLogout = async () => {
+    try {
+      handleMenuClose();
+      await logout(() => {
+        navigate("/login");
+      });
+    } catch (error) {
+      console.error(error);
+    }
   };
 
   const renderMenu = (
     <Menu
+      id="menu-appbar"
       anchorEl={anchorEl}
-      anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+      anchorOrigin={{
+        vertical: "bottom",
+        horizontal: "right",
+      }}
       keepMounted
       transformOrigin={{
         vertical: "top",
@@ -59,22 +61,40 @@ function MainHeader() {
           {user?.email}
         </Typography>
       </Box>
-      <Divider sx={{ boderStyle: "dashed" }} />
-      <MenuItem onClick={handleMenuClose} component={RouterLink} to="/">
-        Profile
+
+      <Divider sx={{ borderStyle: "dashed" }} />
+
+      <MenuItem
+        onClick={handleMenuClose}
+        to="/"
+        component={RouterLink}
+        sx={{ mx: 1 }}
+      >
+        My Profile
       </MenuItem>
-      <Divider sx={{ boderStyle: "dashed" }} />
-      <MenuItem onClick={handleMenuClose} component={RouterLink} to="/account">
-        Account Setting
+
+      <Divider sx={{ borderStyle: "dashed" }} />
+
+      <MenuItem
+        onClick={handleMenuClose}
+        to="/account"
+        component={RouterLink}
+        sx={{ mx: 1 }}
+      >
+        Account Settings
       </MenuItem>
-      <Divider sx={{ boderStyle: "dashed" }} />
-      <MenuItem onClick={handleLogout}>Log out</MenuItem>
+
+      <Divider sx={{ borderStyle: "dashed" }} />
+
+      <MenuItem onClick={handleLogout} sx={{ m: 1 }}>
+        Logout
+      </MenuItem>
     </Menu>
   );
 
   return (
     <Box sx={{ mb: 3 }}>
-      <AppBar position="static">
+      <AppBar position="static" color="transparent">
         <Toolbar>
           <IconButton
             size="large"
@@ -91,12 +111,12 @@ function MainHeader() {
           <Box sx={{ flexGrow: 1 }} />
           <Box>
             <Avatar
-              src={user.avatarURL}
+              src={user.avatarUrl}
               alt={user.name}
               onClick={handleProfileMenuOpen}
             />
-            {renderMenu}
           </Box>
+          {renderMenu}
         </Toolbar>
       </AppBar>
     </Box>

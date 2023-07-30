@@ -1,19 +1,20 @@
 import React, { useState } from "react";
-
 import { FCheckbox, FormProvider, FTextField } from "../components/form";
 import { useForm } from "react-hook-form";
 import { yupResolver } from "@hookform/resolvers/yup";
 import * as Yup from "yup";
 
-import { useLocation, useNavigate, Link as RouterLink } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
+import { useNavigate, useLocation, Link as RouterLink } from "react-router-dom";
 
-import Container from "@mui/material/Container";
-import Stack from "@mui/material/Stack";
-import Alert from "@mui/material/Alert";
-import Link from "@mui/material/Link";
-import InputAdornment from "@mui/material/InputAdornment";
-import IconButton from "@mui/material/IconButton";
+import {
+  Alert,
+  Container,
+  IconButton,
+  InputAdornment,
+  Link,
+  Stack,
+} from "@mui/material";
 import VisibilityIcon from "@mui/icons-material/Visibility";
 import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 import { LoadingButton } from "@mui/lab";
@@ -30,12 +31,7 @@ const defaultValues = {
 };
 
 function LoginPage() {
-  const location = useLocation();
-  const navigate = useNavigate();
   const auth = useAuth();
-
-  const [showPassword, setShowPassword] = useState(false);
-
   const methods = useForm({
     resolver: yupResolver(LoginSchema),
     defaultValues,
@@ -48,12 +44,18 @@ function LoginPage() {
     formState: { errors, isSubmitting },
   } = methods;
 
+  const navigate = useNavigate();
+  const location = useLocation();
+  const [showPassword, setShowPassword] = useState(false);
+
   const onSubmit = async (data) => {
     const from = location.state?.from?.pathname || "/";
     let { email, password } = data;
+
     try {
       await auth.login({ email, password }, () => {
         navigate(from, { replace: true });
+        // this is the callback param of the login func in AuthProvider
       });
     } catch (error) {
       reset();
@@ -74,19 +76,16 @@ function LoginPage() {
               Get started
             </Link>
           </Alert>
-
-          <FTextField name="email" label="Email address" />
+          <FTextField name={"email"} label={"Email address"} />
           <FTextField
-            name="password"
-            label="Password"
+            name={"password"}
+            label={"Password"}
             type={showPassword ? "text" : "password"}
             InputProps={{
               endAdornment: (
                 <InputAdornment position="end">
                   <IconButton
-                    onClick={() => {
-                      setShowPassword(!showPassword);
-                    }}
+                    onClick={() => setShowPassword(!showPassword)}
                     edge="end"
                   >
                     {showPassword ? <VisibilityIcon /> : <VisibilityOffIcon />}
@@ -96,15 +95,16 @@ function LoginPage() {
             }}
           />
         </Stack>
+
         <Stack
-          direction="row"
-          alignItems="center"
-          justifyContent="space-between"
+          direction={"row"}
+          alignItems={"center"}
+          justifyContent={"space-between"}
           sx={{ my: 2 }}
         >
-          <FCheckbox name="remember" label="Remember me" />
+          <FCheckbox name={"remember"} label="Remember me" />
           <Link component={RouterLink} variant="subtitle2" to="/">
-            Forgot password
+            Forgot password?
           </Link>
         </Stack>
         <LoadingButton

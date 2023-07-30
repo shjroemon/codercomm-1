@@ -1,12 +1,8 @@
 import React from "react";
-
-import Stack from "@mui/material/Stack";
-import Box from "@mui/material/Box";
-
-import { Outlet } from "react-router-dom";
-
+import { Box, Stack } from "@mui/material";
 import MainHeader from "./MainHeader";
 import MainFooter from "./MainFooter";
+import { Outlet } from "react-router-dom";
 import AlertMsg from "../components/AlertMsg";
 
 function MainLayout() {

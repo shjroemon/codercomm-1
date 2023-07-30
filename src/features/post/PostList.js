@@ -1,70 +1,53 @@
 import React, { useEffect, useState } from "react";
-
-import { Typography, Box, Modal } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
-
 import { useDispatch, useSelector } from "react-redux";
 import { getPosts } from "./postSlice";
-
 import PostCard from "./PostCard";
-
-import { styled } from "@mui/material/styles";
-import UpdatePost from "./UpdatePost";
-
-const BoxStyled = styled(Box)(({ theme }) => ({
-  position: "absolute",
-  top: "50%",
-  left: "50%",
-  padding: theme.spacing(1),
-  transform: "translate(-50%,-50%)",
-  [theme.breakpoints.up("xs")]: {
-    width: "100%",
-  },
-  [theme.breakpoints.up("sm")]: {
-    width: "500px",
-  },
-}));
+import { LoadingButton } from "@mui/lab";
+import { Box, Modal, Typography } from "@mui/material";
+import PostEditForm from "./PostEditForm";
 
 function PostList({ userId }) {
-  const [postUpdated, setPostUpdated] = useState(null);
+  const [postEdited, setPostEdited] = useState(null);
+
   const [page, setPage] = useState(1);
   const { currentPagePosts, postsById, totalPosts, isLoading } = useSelector(
     (state) => state.post
   );
 
   const posts = currentPagePosts.map((postId) => postsById[postId]);
+  // postsById is an obj
+
   const dispatch = useDispatch();
 
   useEffect(() => {
     if (userId) dispatch(getPosts({ userId, page }));
-  }, [userId, page, dispatch]);
+    // no userId the first time
+  }, [dispatch, userId, page]);
 
-  const hanldeUpdatePost = (post) => {
-    setPostUpdated(post);
+  const handleEditPost = (post) => {
+    setPostEdited(post);
   };
 
   return (
     <>
       {posts.map((post) => (
         <PostCard
-          handleUpdate={() => {
-            hanldeUpdatePost(post);
-          }}
           key={post._id}
           post={post}
+          handleEdit={() => {
+            handleEditPost(post);
+          }}
         />
       ))}
-      <Box
-        sx={{ display: "flex", justifyContent: "center", alignItems: "center" }}
-      >
+      <Box sx={{ display: "flex", justifyContent: "center" }}>
         {totalPosts ? (
           <LoadingButton
-            onClick={() => {
-              setPage((page) => page + 1);
-            }}
             variant="outlined"
             size="small"
             loading={isLoading}
+            onClick={() => setPage((page) => page + 1)}
+            disabled={Boolean(totalPosts) && posts.length >= totalPosts}
+            // disabled if there are zero posts no more posts to load
           >
             Load more
           </LoadingButton>
@@ -72,20 +55,19 @@ function PostList({ userId }) {
           <Typography variant="h6">No post yet</Typography>
         )}
       </Box>
+
       <Modal
-        open={!!postUpdated}
-        onClose={() => {
-          setPostUpdated(null);
-        }}
+        sx={{ display: "flex", alignItems: "center", justifyContent: "center" }}
+        open={!!postEdited}
+        onClose={() => setPostEdited(null)}
       >
-        <BoxStyled>
-          <UpdatePost
-            {...postUpdated}
-            callback={() => {
-              setPostUpdated(null);
-            }}
-          />
-        </BoxStyled>
+        <Box
+          sx={{
+            width: { xs: "80vw", md: 650 },
+          }}
+        >
+          <PostEditForm post={postEdited} />
+        </Box>
       </Modal>
     </>
   );

@@ -1,21 +1,18 @@
 import React from "react";
-
-import Grid from "@mui/material/Grid";
-import Stack from "@mui/material/Stack";
-
 import useAuth from "../../hooks/useAuth";
-
+import { Grid, Stack } from "@mui/material";
 import ProfileScorecard from "./ProfileScorecard";
 import ProfileAbout from "./ProfileAbout";
 import ProfileSocialInfo from "./ProfileSocialInfo";
-import CreatePost from "../post/CreatePost";
+import PostForm from "../post/PostForm";
 import PostList from "../post/PostList";
 
 function Profile({ profile }) {
   const { user } = useAuth();
+  // user and profile are not necessarily the same account
 
   return (
-    <Grid spacing={3} container>
+    <Grid container spacing={3}>
       <Grid item xs={12} md={4}>
         <Stack spacing={3}>
           <ProfileScorecard profile={profile} />
@@ -25,7 +22,9 @@ function Profile({ profile }) {
       </Grid>
       <Grid item xs={12} md={8}>
         <Stack spacing={3}>
-          {user._id === profile._id && <CreatePost />}
+          {/* if profile is current user then can post  */}
+          {user._id === profile._id && <PostForm />}
+
           <PostList userId={profile._id} />
         </Stack>
       </Grid>

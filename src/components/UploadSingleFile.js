@@ -1,10 +1,9 @@
-import isString from "lodash/isString";
+import React from "react";
+import { Box, Stack, Typography, styled } from "@mui/material";
 import { useDropzone } from "react-dropzone";
-
-import { styled } from "@mui/material/styles";
-import { Box, Stack, Typography } from "@mui/material";
-import RejectionFiles from "./RejectionFiles";
 import AddAPhotoRoundedIcon from "@mui/icons-material/AddAPhotoRounded";
+import { isString } from "lodash";
+import RejectionFiles from "./RejectionFiles";
 
 const DropZoneStyle = styled("div")(({ theme }) => ({
   outline: "none",
@@ -26,13 +25,10 @@ function UploadSingleFile({ error = false, file, helperText, sx, ...other }) {
     isDragActive,
     isDragReject,
     fileRejections,
-  } = useDropzone({
-    multiple: false,
-    ...other,
-  });
+  } = useDropzone({ multiple: false, ...other });
 
   return (
-    <Box sx={{ width: "100%", ...sx }}>
+    <Box>
       <DropZoneStyle
         {...getRootProps()}
         sx={{
@@ -48,7 +44,6 @@ function UploadSingleFile({ error = false, file, helperText, sx, ...other }) {
         }}
       >
         <input {...getInputProps()} />
-
         <Stack
           direction="column"
           spacing={2}
@@ -63,7 +58,7 @@ function UploadSingleFile({ error = false, file, helperText, sx, ...other }) {
             sx={{ color: "#637381" }}
             textAlign="center"
           >
-            Drop or Select Image
+            Drop or Select an Image
           </Typography>
         </Stack>
 
@@ -81,8 +76,8 @@ function UploadSingleFile({ error = false, file, helperText, sx, ...other }) {
             }}
           >
             <img
-              alt="file preview"
               src={isString(file) ? file : file.preview}
+              alt="file preview"
             />
           </Box>
         )}
@@ -91,8 +86,6 @@ function UploadSingleFile({ error = false, file, helperText, sx, ...other }) {
       {fileRejections.length > 0 && (
         <RejectionFiles fileRejections={fileRejections} />
       )}
-
-      {helperText && helperText}
     </Box>
   );
 }

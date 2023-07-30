@@ -56,11 +56,10 @@ function UserTable({ users }) {
             </TableRow>
           </TableHead>
           <TableBody>
-            {users.map((user, index) => {
-              console.log(user);
+            {users.map((user) => {
               const { status, action } = getActionsAndStatus(user);
               return (
-                <TableRow key={index} hover>
+                <TableRow key={user._id} hover>
                   <TableCell
                     sx={{
                       display: "flex",

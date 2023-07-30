@@ -1,16 +1,13 @@
 import React from "react";
-
 import useAuth from "../../hooks/useAuth";
-
-import { styled, alpha } from "@mui/material/styles";
-import { Avatar, Box, Typography } from "@mui/material";
-
 import FriendStatus from "../friend/FriendStatus";
-import ActionButton from "../friend/ActionButton";
+import { Avatar, Box, Typography } from "@mui/material";
+import { alpha, styled } from "@mui/material/styles";
 
 const RootStyle = styled("div")(({ theme }) => ({
   "&:before": {
-    backdropFilter: "blur(1px)",
+    // a layer with empty content that acts as a foreground
+    backdropFilter: `blur(1px)`,
     backgroundColor: alpha(theme.palette.primary.darker, 0.7),
     top: 0,
     zIndex: 9,
@@ -39,14 +36,23 @@ const InfoStyle = styled("div")(({ theme }) => ({
 function ProfileCover({ profile }) {
   const { user } = useAuth();
   const currentUserId = user._id;
+
   const {
     _id: targetUserId,
     name,
-    jobtitle,
+    jobTitle,
     coverUrl,
     avatarUrl,
     friendship,
   } = profile;
+  // rename _id to targetUserId
+
+  const handleError = (e) => {
+    // use a stock image if error
+    const imgIndex = Math.floor(Math.random() * 5) + 1;
+    e.target.src = `/covers/cover_${imgIndex}.jpeg`;
+    e.target.onError = null; // turn off the default onError
+  };
 
   const friendStatus = (
     <FriendStatus
@@ -56,12 +62,6 @@ function ProfileCover({ profile }) {
       friendship={friendship}
     />
   );
-
-  const handleError = (e) => {
-    const imageIndex = Math.floor(Math.random() * 5) + 1;
-    e.target.src = `/covers/cover_${imageIndex}.jpeg`;
-    e.target.onError = null;
-  };
 
   return (
     <RootStyle>
@@ -78,6 +78,7 @@ function ProfileCover({ profile }) {
             height: { xs: 80, md: 128 },
           }}
         />
+
         <Box
           sx={{
             ml: { md: 3 },
@@ -87,25 +88,17 @@ function ProfileCover({ profile }) {
           }}
         >
           <Typography variant="h5">{name}</Typography>
-          <Typography sx={{ opacity: 0.72 }}>{jobtitle}</Typography>
-          {friendStatus ? (
-            friendStatus
-          ) : (
-            <ActionButton
-              sx={{ mt: 1 }}
-              currentUserId={currentUserId}
-              targetUserId={targetUserId}
-              friendship={friendship}
-            />
-          )}
+          <Typography sx={{ opacity: 0.72 }}>{jobTitle}</Typography>
+          {friendStatus}
         </Box>
       </InfoStyle>
+
       <Box sx={{ overflow: "hidden" }}>
         <img
           src={coverUrl}
           alt="profile cover"
-          width="100%"
-          height="100%"
+          width={"100%"}
+          height={"100%"}
           onError={handleError}
         />
       </Box>

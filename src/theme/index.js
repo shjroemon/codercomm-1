@@ -1,9 +1,10 @@
-import { CssBaseline } from "@mui/material";
+import React from "react";
 import {
+  ThemeProvider as MUIThemeProvider,
   alpha,
   createTheme,
-  ThemeProvider as MUIThemeProvider,
 } from "@mui/material/styles";
+import { CssBaseline } from "@mui/material";
 import customizeComponents from "./customizations";
 
 const PRIMARY = {
@@ -72,9 +73,13 @@ function ThemeProvider({ children }) {
       },
     },
     shape: { borderRadius: 8 },
+
+    // components: {
+    // },
   };
 
   const theme = createTheme(themeOptions);
+
   theme.components = customizeComponents(theme);
 
   return (

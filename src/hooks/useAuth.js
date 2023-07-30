@@ -1,6 +1,7 @@
+import { AuthContext } from "../contexts/AuthContext";
 import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
 
+// children wont have to import AuthContext & useContext, only useAuth
 const useAuth = () => {
   return useContext(AuthContext);
 };

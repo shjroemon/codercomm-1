@@ -1,17 +1,15 @@
 import React from "react";
 
-import { Stack, Card, InputAdornment } from "@mui/material";
 import LinkedInIcon from "@mui/icons-material/LinkedIn";
-import InstagramIcom from "@mui/icons-material/Instagram";
+import InstagramIcon from "@mui/icons-material/Instagram";
 import FacebookIcon from "@mui/icons-material/Facebook";
 import TwitterIcon from "@mui/icons-material/Twitter";
-
-import { LoadingButton } from "@mui/lab";
-import { useForm } from "react-hook-form";
-import { FormProvider, FTextField } from "../../components/form";
-
 import useAuth from "../../hooks/useAuth";
+import { useForm } from "react-hook-form";
 import { useDispatch, useSelector } from "react-redux";
+import { Card, Stack, InputAdornment } from "@mui/material";
+import { FormProvider, FTextField } from "../../components/form";
+import { LoadingButton } from "@mui/lab";
 import { updateUserProfile } from "./userSlice";
 
 const SOCIAL_LINKS = [
@@ -21,7 +19,7 @@ const SOCIAL_LINKS = [
   },
   {
     value: "instagramLink",
-    icon: <InstagramIcom sx={{ fontSize: 30 }} />,
+    icon: <InstagramIcon sx={{ fontSize: 30 }} />,
   },
   {
     value: "linkedinLink",
@@ -35,7 +33,7 @@ const SOCIAL_LINKS = [
 
 function AccountSocialLinks() {
   const { user } = useAuth();
-  const dispatch = useDispatch();
+
   const isLoading = useSelector((state) => state.user.isLoading);
 
   const defaultValues = {
@@ -48,12 +46,12 @@ function AccountSocialLinks() {
   const methods = useForm({
     defaultValues,
   });
-
   const {
     handleSubmit,
     formState: { isSubmitting },
   } = methods;
 
+  const dispatch = useDispatch();
   const onSubmit = async (data) => {
     dispatch(updateUserProfile({ userId: user._id, ...data }));
   };
@@ -61,11 +59,11 @@ function AccountSocialLinks() {
   return (
     <Card sx={{ p: 3 }}>
       <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
-        <Stack spacing={3} alignItems="flex-end">
+        <Stack spacing={3} alignItems={"flex-end"}>
           {SOCIAL_LINKS.map((link) => (
             <FTextField
-              name={link.value}
               key={link.value}
+              name={link.value}
               InputProps={{
                 startAdornment: (
                   <InputAdornment position="start">{link.icon}</InputAdornment>

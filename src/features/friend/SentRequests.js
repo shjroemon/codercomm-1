@@ -1,18 +1,18 @@
 import React, { useEffect, useState } from "react";
-import {
-  Stack,
-  Typography,
-  Card,
-  Box,
-  TablePagination,
-  Container,
-} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
-import { getOutGoingRequests } from "./friendSlice";
-import UserTable from "./UserTable";
+import { getSentRequests } from "./friendSlice";
+import {
+  Box,
+  Card,
+  Container,
+  Stack,
+  TablePagination,
+  Typography,
+} from "@mui/material";
 import SearchInput from "../../components/SearchInput";
+import UserTable from "./UserTable";
 
-function OutGoingRequests() {
+function SentRequests() {
   const [filterName, setFilterName] = useState("");
   const [page, setPage] = useState(0);
   const [rowsPerPage, setRowsPerPage] = useState(10);
@@ -21,24 +21,25 @@ function OutGoingRequests() {
     (state) => state.friend
   );
   const users = currentPageUsers.map((userId) => usersById[userId]);
+  // users is an array, while usersById is an obj
+
   const dispatch = useDispatch();
 
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (e, newPage) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+  const handleChangeRowsPerPage = (e) => {
+    setRowsPerPage(parseInt(e.target.value, 10));
+    // 10 is just the radix to specify the number system
     setPage(0);
   };
 
-  const handleSubmit = (searchQuery) => {
-    setFilterName(searchQuery);
-  };
+  const handleSubmit = (searchQuery) => setFilterName(searchQuery);
 
   useEffect(() => {
     dispatch(
-      getOutGoingRequests({ filterName, page: page + 1, limit: rowsPerPage })
+      getSentRequests({ filterName, page: page + 1, limit: rowsPerPage })
     );
   }, [filterName, page, rowsPerPage, dispatch]);
 
@@ -53,17 +54,17 @@ function OutGoingRequests() {
             <SearchInput handleSubmit={handleSubmit} />
 
             <Typography
-              variant="subtitle"
+              ariant="subtitle"
               sx={{ color: "text.secondary", ml: 1 }}
             >
               {totalUsers > 1
-                ? `${totalUsers} users found`
+                ? `${totalUsers} requests found`
                 : totalUsers === 1
-                ? `${totalUsers} user found`
-                : "No user found"}
+                ? `${totalUsers} request found`
+                : "No requests found"}
             </Typography>
 
-            <Box sx={{ flexGrow: 1 }} />
+            <Box sx={{ flexGrow: 1 }}>{/* empty flexGrow box */}</Box>
 
             <TablePagination
               sx={{
@@ -81,11 +82,11 @@ function OutGoingRequests() {
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </Stack>
-          <UserTable users={users} />
         </Stack>
+        <UserTable users={users} />
       </Card>
     </Container>
   );
 }
 
-export default OutGoingRequests;
+export default SentRequests;

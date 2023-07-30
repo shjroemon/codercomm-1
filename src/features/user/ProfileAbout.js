@@ -1,9 +1,6 @@
 import React from "react";
-
-import { Link as RouterLink } from "react-router-dom";
-
-import { Link, Card, Typography, CardHeader, Stack, Box } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { Box, Card, CardHeader, Link, Stack, Typography } from "@mui/material";
 import PinDropIcon from "@mui/icons-material/PinDrop";
 import EmailIcon from "@mui/icons-material/Email";
 import BusinessCenterIcon from "@mui/icons-material/BusinessCenter";
@@ -25,34 +22,30 @@ function ProfileAbout({ profile }) {
       <Stack spacing={2} sx={{ p: 3 }}>
         <Typography variant="body2">{aboutMe}</Typography>
 
-        <Stack direction="row">
+        <Stack direction={"row"}>
           <IconStyle>
             <PinDropIcon />
           </IconStyle>
           <Typography variant="body2">
-            <Link variant="subtitle2" color="text.primary">
+            <Link component={"span"} variant="subtitle2" color={"text.primary"}>
               {city} {country}
             </Link>
           </Typography>
         </Stack>
 
-        <Stack direction="row">
+        <Stack direction={"row"}>
           <IconStyle>
             <EmailIcon />
           </IconStyle>
-          <Typography variant="body2">
-            <Link variant="subtitle2" color="text.primary">
-              {email}
-            </Link>
-          </Typography>
+          <Typography variant="body2">{email}</Typography>
         </Stack>
 
-        <Stack direction="row">
+        <Stack direction={"row"}>
           <IconStyle>
             <BusinessCenterIcon />
           </IconStyle>
           <Typography variant="body2">
-            <Link variant="subtitle2" color="text.primary">
+            <Link component={"span"} variant="subtitle2" color={"text.primary"}>
               {company}
             </Link>
           </Typography>

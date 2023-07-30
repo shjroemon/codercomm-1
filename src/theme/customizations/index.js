@@ -1,9 +1,9 @@
 import Card from "./Card";
-import Tabs from "./Tabs";
 import Link from "./Link";
+import Tabs from "./Tabs";
 
 function customizeComponents(theme) {
-  return { ...Tabs(theme), ...Card(theme), ...Link(theme) };
+  return { ...Link(theme), ...Card(theme), ...Tabs(theme) };
 }
 
 export default customizeComponents;

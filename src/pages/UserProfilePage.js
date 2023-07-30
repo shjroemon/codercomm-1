@@ -1,29 +1,29 @@
 import React, { useEffect } from "react";
-
+import { shallowEqual, useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
-
-import { useDispatch, useSelector, shallowEqual } from "react-redux";
-
 import { getUser } from "../features/user/userSlice";
-
 import { Card, Container } from "@mui/material";
 import LoadingScreen from "../components/LoadingScreen";
-import Profile from "../features/user/Profile";
 import ProfileCover from "../features/user/ProfileCover";
+import Profile from "../features/user/Profile";
 
 function UserProfilePage() {
   const params = useParams();
   const userId = params.userId;
+  // path="user/:userId"
 
   const dispatch = useDispatch();
   const { selectedUser, isLoading } = useSelector(
     (state) => state.user,
     shallowEqual
   );
+  // shallowEqual for when selectedUser is changed internally, because it's an obj
 
   useEffect(() => {
-    dispatch(getUser(userId));
-  }, [userId]);
+    if (userId) {
+      dispatch(getUser(userId));
+    }
+  }, [dispatch, userId]);
 
   return (
     <Container>
@@ -31,7 +31,13 @@ function UserProfilePage() {
         <LoadingScreen />
       ) : (
         <>
-          <Card sx={{ mb: 3, height: 200, position: "relative" }}>
+          <Card
+            sx={{
+              mb: 3,
+              height: 280,
+              position: "relative",
+            }}
+          >
             {selectedUser && <ProfileCover profile={selectedUser} />}
           </Card>
           {selectedUser && <Profile profile={selectedUser} />}

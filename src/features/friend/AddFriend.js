@@ -1,40 +1,41 @@
 import React, { useEffect, useState } from "react";
-import {
-  Stack,
-  Typography,
-  Card,
-  Box,
-  TablePagination,
-  Container,
-} from "@mui/material";
 import { useDispatch, useSelector } from "react-redux";
 import { getUsers } from "./friendSlice";
-import UserTable from "./UserTable";
+import {
+  Box,
+  Card,
+  Container,
+  Stack,
+  TablePagination,
+  Typography,
+} from "@mui/material";
 import SearchInput from "../../components/SearchInput";
+import UserTable from "./UserTable";
 
 function AddFriend() {
   const [filterName, setFilterName] = useState("");
-  const [page, setPage] = React.useState(0);
-  const [rowsPerPage, setRowsPerPage] = React.useState(10);
+  const [page, setPage] = useState(0);
+  const [rowsPerPage, setRowsPerPage] = useState(10);
 
   const { currentPageUsers, usersById, totalUsers } = useSelector(
     (state) => state.friend
   );
   const users = currentPageUsers.map((userId) => usersById[userId]);
+  // users is an array, while usersById is an obj
+
   const dispatch = useDispatch();
 
-  const handleChangePage = (event, newPage) => {
+  const handleChangePage = (e, newPage) => {
     setPage(newPage);
   };
 
-  const handleChangeRowsPerPage = (event) => {
-    setRowsPerPage(parseInt(event.target.value, 10));
+  const handleChangeRowsPerPage = (e) => {
+    setRowsPerPage(parseInt(e.target.value, 10));
+    // 10 is just the radix to specify the number system
     setPage(0);
   };
 
-  const handleSubmit = (searchQuery) => {
-    setFilterName(searchQuery);
-  };
+  const handleSubmit = (searchQuery) => setFilterName(searchQuery);
 
   useEffect(() => {
     dispatch(getUsers({ filterName, page: page + 1, limit: rowsPerPage }));
@@ -51,17 +52,17 @@ function AddFriend() {
             <SearchInput handleSubmit={handleSubmit} />
 
             <Typography
-              variant="subtitle"
+              ariant="subtitle"
               sx={{ color: "text.secondary", ml: 1 }}
             >
               {totalUsers > 1
                 ? `${totalUsers} users found`
                 : totalUsers === 1
                 ? `${totalUsers} user found`
-                : "No user found"}
+                : "No users found"}
             </Typography>
 
-            <Box sx={{ flexGrow: 1 }} />
+            <Box sx={{ flexGrow: 1 }}>{/* empty flexGrow box */}</Box>
 
             <TablePagination
               sx={{
@@ -79,8 +80,8 @@ function AddFriend() {
               onRowsPerPageChange={handleChangeRowsPerPage}
             />
           </Stack>
-          <UserTable users={users} />
         </Stack>
+        <UserTable users={users} />
       </Card>
     </Container>
   );

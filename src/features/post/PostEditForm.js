@@ -1,14 +1,15 @@
 // import React, { useRef } from "react";
 import React, { useCallback } from "react";
 import { yupResolver } from "@hookform/resolvers/yup";
-import { Box, Card, Stack, alpha } from "@mui/material";
+import { Box, Button, Card, Stack, alpha } from "@mui/material";
 import { useForm } from "react-hook-form";
 
 import * as Yup from "yup";
 import { FTextField, FUploadImage, FormProvider } from "../../components/form";
 import { LoadingButton } from "@mui/lab";
 import { useDispatch, useSelector } from "react-redux";
-import { createPost } from "./postSlice";
+// import { createPost } from "./postSlice";
+import { editPost } from "./postSlice";
 
 const yupSchema = Yup.object().shape({
   content: Yup.string().required("Content is required"),
@@ -20,17 +21,17 @@ const defaultValues = {
   // check api for posts for hints
 };
 
-function PostForm() {
+function PostEditForm({ post = defaultValues }) {
   const methods = useForm({
     resolver: yupResolver(yupSchema),
-    defaultValues,
+    defaultValues: { ...post },
   });
 
   const {
     handleSubmit,
     reset,
     setValue,
-    formState: { isSubmitting },
+    formState: { isSubmitting, isDirty },
   } = methods;
 
   const dispatch = useDispatch();
@@ -41,7 +42,7 @@ function PostForm() {
 
   const onSubmit = (data) => {
     // console.log(data);
-    dispatch(createPost(data)).then(() => reset());
+    dispatch(editPost(data)).then(() => reset());
   };
 
   // const handleFile = (e) => {
@@ -62,7 +63,8 @@ function PostForm() {
           "image",
           Object.assign(file, {
             preview: URL.createObjectURL(file),
-          })
+          }),
+          { shouldDirty: true }
         );
       }
     },
@@ -78,7 +80,7 @@ function PostForm() {
             multiline
             fullWidth
             rows={4}
-            placeholder="Share what you're thinking here..."
+            placeholder=""
             sx={{
               "& fieldset": {
                 borderWidth: `1px !important`,
@@ -93,7 +95,7 @@ function PostForm() {
 
           <FUploadImage
             name="image"
-            accept={{ "image/*": [".jpeg", ".jpg", ".png"] }}
+            accept="image/*"
             maxSize={3145728}
             onDrop={handleDrop}
           />
@@ -105,14 +107,31 @@ function PostForm() {
               justifyContent: "flex-end",
             }}
           >
-            <LoadingButton
-              type="submit"
-              variant="contained"
-              size="small"
-              loading={isSubmitting || isLoading}
-            >
-              Post
-            </LoadingButton>
+            {isDirty ? (
+              <LoadingButton
+                type="submit"
+                variant="contained"
+                size="small"
+                loading={isSubmitting || isLoading}
+              >
+                Update
+              </LoadingButton>
+            ) : (
+              <Button variant="contained" size="small" type="button" disabled>
+                Update
+              </Button>
+            )}
+
+            {/* {isDirty && (
+              <Button
+                type="button"
+                onClick={() => reset()}
+                variant="contained"
+                size="small"
+              >
+                Cancel
+              </Button>
+            )} */}
           </Box>
         </Stack>
       </FormProvider>
@@ -120,4 +139,4 @@ function PostForm() {
   );
 }
 
-export default PostForm;
+export default PostEditForm;
